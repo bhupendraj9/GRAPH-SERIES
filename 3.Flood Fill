@@ -1,68 +1,49 @@
-/*
- algorithm - 
- - initially color the source node 
- - call the bfs for neighbourss of the source which are having same color 
-   as the initial color of the source
- - during bfs color the node and every time call the bfs for adjacent nodes
-*/
-class Solution {
-public:
-   void bfs(int sr,int sc,vector<vector<int>>& copy,vector<vector<int>>& image,vector<vector<int>>& visited,int color)
-   {
-       int n=copy.size();
-       int m=copy[0].size();
+#include<bits/stdc++.h>
+void bfs(int r,int c,vector<vector<int>> &image,vector<vector<int>> &copy,
+vector<vector<int>> &visited,int color)
+{
+  queue<pair<int,int>>q;
+  q.push({r,c});
+   
+  int n=image.size();
+  int m=image[0].size();
 
-       queue<pair<int,int>>q;
-       q.push({sr,sc});
+  int dr[]={-1,1,0,0};
+  int dc[]={0,0,-1,1};
+  while(!q.empty())
+  {
+    int r=q.front().first;
+    int c=q.front().second;
+    q.pop();
 
-       while(!q.empty())
-       {
-           int i=q.front().first;
-           int j=q.front().second;
+  for(int i=0;i<4;i++)
+  {
+      int newr=r+dr[i];
+      int newc=c+dc[i];
 
-           q.pop();
+      if(newr<n && newr>=0 && newc<m && newc>=0 && !visited[newr][newc] && 
+      image[newr][newc]==image[r][c])
+      {
+          copy[newr][newc]=color;
+          visited[newr][newc]=1;
+          bfs(newr,newc,image,copy,visited,color);
+      } 
+  }
+  }
+}
 
-        //top
-        
-        if(i-1>=0 && image[i-1][j]==image[sr][sc] && !visited[i-1][j])
-        {
-         
-         visited[i-1][j]=1;
-          copy[i-1][j]=color;
-         bfs(i-1,j,copy,image,visited,color);
-        }
-        //bottom
-          
-         if(i+1<n && image[i+1][j]==image[sr][sc] && !visited[i+1][j])
-         {
-          visited[i+1][j]=1;
-          copy[i+1][j]=color;   
-          bfs(i+1,j,copy,image,visited,color);
-         }
-        //left
-         if(j-1>=0 && image[i][j-1]==image[sr][sc] && !visited[i][j-1])
-        {
-          visited[i][j-1]=1;
-          copy[i][j-1]=color;
-         bfs(i,j-1,copy,image,visited,color);
-         }
-        //right
-          if(j+1<m && image[i][j+1]==image[sr][sc] && !visited[i][j+1])
-        {
-          visited[i][j+1]=1;
-          copy[i][j+1]=color;
-        bfs(i,j+1,copy,image,visited,color);
-         }
-       }
-   }
-    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {
-        int n=image.size();
-        int m=image[0].size();
-        vector<vector<int>>copy = image;
-        vector<vector<int>>visited(n,vector<int>(m,0));
-        copy[sr][sc]=color;
-        visited[sr][sc]=1;
-        bfs(sr,sc,copy,image,visited,color);
-        return copy;
-    }
-};
+vector<vector<int>> floodFill(vector<vector<int>> &image, int x, int y, int c)
+{
+   int n=image.size();
+   int m= image[0].size();
+
+   vector<vector<int>>visited(n,vector<int>(m,0));
+
+   vector<vector<int>>copy=image;
+
+   copy[x][y]=c;
+
+   bfs(x,y,image,copy,visited,c);
+
+   return copy;
+}
